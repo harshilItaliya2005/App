@@ -19,7 +19,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.numberpuzzle.ui.theme.NumberPuzzleTheme
@@ -27,6 +26,7 @@ import com.example.numberpuzzle.ui.theme.NumberPuzzleTheme
 val data_list = mutableStateListOf("1", "2", "3", "4", "5", "6", "7", "8", "")
 
 class MainActivity : ComponentActivity() {
+    private var gameWon = mutableStateOf(false)
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -107,9 +107,13 @@ class MainActivity : ComponentActivity() {
                     ElevatedCard(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable {
-                                handleTileClick(index)
-                            }
+                            .then(
+                                if (!gameWon.value) {
+                                    Modifier.clickable { handleTileClick(index) }
+                                } else {
+                                    Modifier
+                                }
+                            )
                             .aspectRatio(1f),
                         elevation = CardDefaults.cardElevation(5.dp),
                         colors = CardDefaults.cardColors(containerColor = Color(0xFFA1662F))
@@ -131,6 +135,7 @@ class MainActivity : ComponentActivity() {
             ElevatedButton(
                 onClick = {
                     if (checkWon()) {
+                        gameWon.value = true
                         Toast.makeText(
                             applicationContext,
                             "Congratulations! You win!",
@@ -160,72 +165,75 @@ class MainActivity : ComponentActivity() {
     }
 
     fun handleTileClick(index: Int) {
-        Log.d("ShowLog", "Tile clicked at index: $index")
-        when (index) {
-            0 -> {
-                swap(index, 1)
-                swap(index, 3)
-                swap(index, 6)
-                swap(index, 2)
-            }
+        if (!gameWon.value) {
+            Log.d("ShowLog", "Tile clicked at index: $index")
+            when (index) {
+                0 -> {
+                    swap(index, 1)
+                    swap(index, 3)
+                    swap(index, 6)
+                    swap(index, 2)
+                }
 
-            1 -> {
-                swap(index, 0)
-                swap(index, 2)
-                swap(index, 4)
-                swap(index, 7)
-            }
+                1 -> {
+                    swap(index, 0)
+                    swap(index, 2)
+                    swap(index, 4)
+                    swap(index, 7)
+                }
 
-            2 -> {
-                swap(index, 1)
-                swap(index, 5)
-                swap(index, 0)
-                swap(index, 8)
-            }
+                2 -> {
+                    swap(index, 1)
+                    swap(index, 5)
+                    swap(index, 0)
+                    swap(index, 8)
+                }
 
-            3 -> {
-                swap(index, 0)
-                swap(index, 4)
-                swap(index, 6)
-                swap(index, 5)
-            }
+                3 -> {
+                    swap(index, 0)
+                    swap(index, 4)
+                    swap(index, 6)
+                    swap(index, 5)
+                }
 
-            4 -> {
-                swap(index, 1)
-                swap(index, 3)
-                swap(index, 5)
-                swap(index, 7)
+                4 -> {
+                    swap(index, 1)
+                    swap(index, 3)
+                    swap(index, 5)
+                    swap(index, 7)
 
-            }
+                }
 
-            5 -> {
-                swap(index, 2)
-                swap(index, 4)
-                swap(index, 8)
-                swap(index, 3)
-            }
+                5 -> {
+                    swap(index, 2)
+                    swap(index, 4)
+                    swap(index, 8)
+                    swap(index, 3)
+                }
 
-            6 -> {
-                swap(index, 3)
-                swap(index, 7)
-                swap(index, 0)
-                swap(index, 8)
-            }
+                6 -> {
+                    swap(index, 3)
+                    swap(index, 7)
+                    swap(index, 0)
+                    swap(index, 8)
+                }
 
-            7 -> {
-                swap(index, 4)
-                swap(index, 6)
-                swap(index, 8)
-                swap(index, 1)
-            }
+                7 -> {
+                    swap(index, 4)
+                    swap(index, 6)
+                    swap(index, 8)
+                    swap(index, 1)
+                }
 
-            8 -> {
-                swap(index, 5)
-                swap(index, 7)
-                swap(index, 6)
-                swap(index, 2)
+                8 -> {
+                    swap(index, 5)
+                    swap(index, 7)
+                    swap(index, 6)
+                    swap(index, 2)
+                }
             }
         }
+
     }
 
     fun swap(p: Int, p1: Int) {
@@ -236,6 +244,7 @@ class MainActivity : ComponentActivity() {
     }
 
     fun resetGame() {
+        gameWon.value = false
         data_list.shuffle()
         Log.d("ShowLog", "Game reset and shuffled: $data_list")
     }
